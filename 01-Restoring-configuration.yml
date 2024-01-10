@@ -1,0 +1,44 @@
+---
+
+- name: "Restore the configration to devices"
+  hosts: localhost
+
+  tasks:
+    - name: "Collect Data info"
+      ansible.builtin.setup:
+        filter:
+          - "ansible_date_time"
+
+    - name: "Save info as Variable"
+      set_fact:
+        TD: "{{ ansible_date_time.date }}"
+
+- name: "Playbook2: Stating restore the configration Configurations"
+  hosts: cisco
+  connection: network_cli
+
+  tasks:
+    - name: "Create a Diff directory"
+      file:
+        path: "diffs/{{ hostvars.localhost.TD }}/{{ inventory_hostname }}"
+        state: directory
+      run_once: false
+
+    - name: "Use NAPALM to restore backup configs to devices"
+      napalm_install_config:
+        hostname: "{{ ansible_host }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        dev_os: "{{ napalm_platform }}"
+        config_file: "Backups/{{ hostvars.localhost.TD }}/startup-configs/{{ inventory_hostname }}.startup-config.txt"
+        commit_changes: true
+        replace_config: true
+        get_diffs: true
+        diff_file: "diffs/{{ hostvars.localhost.TD }}/{{ inventory_hostname }}-diffs.txt"
+        optional_args:
+          global_delay_factor: 3
+      register: result
+
+    - name: "Print restore Configuration result"
+      debug:
+        msg: "{{ result }}"

@@ -1,0 +1,31 @@
+---
+
+- name: Gather Cisco IOS Device Information
+  hosts: usa
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Collect Full Set of Facts from IOS Devices
+      ios_facts:
+        gather_subset: all
+      register: ios_full_facts
+    - name: Print all subsets gathered
+      debug:
+        var: ios_full_facts # Changed from all_subset to ios_full_facts
+
+    - name: Gather Hardware Facts
+      ios_facts:
+        gather_subset: hardware
+      register: hw
+    - name: Print Hardware Facts
+      debug:
+        var: hw
+
+    - name: Gather Interface Facts
+      ios_facts:
+        gather_subset: interfaces  # Changed from Interfaces to interfaces
+      register: int
+    - name: Print Interface Facts
+      debug:
+        var: int

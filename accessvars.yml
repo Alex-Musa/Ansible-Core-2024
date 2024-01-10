@@ -1,0 +1,25 @@
+---
+- name: "Printing Info"
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: "Print All Host Variables"
+      debug:
+        msg: "{{ hostvars[ansible_host] }}"
+
+    - name: "Print NTP Info"
+      debug:
+        msg: "{{ hostvars[ansible_host].ntp | default('NTP info not available') }}"
+    
+    - name: "Print OSPF Info"
+      debug:
+        msg: "{{ hostvars[ansible_host].ospf | default('OSPF info not available') }}"
+
+    - name: "Print OSPF Router ID"
+      debug:
+        msg: "This device has an OSPF RID of {{ hostvars[ansible_host].ospf.rid | default('OSPF RID not available') }}"
+
+    - name: "Print OSPF Networks"
+      debug:
+        msg: "This device has an OSPF Networs of {{ hostvars[ansible_host].ospf.networks| default('OSPF Networs not available') }}"

@@ -1,0 +1,102 @@
+---
+
+- name: Configure Loopback Interfaces and OSPF on Cisco Routers
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Check for existing Loopback0 interface
+      ios_command:
+        commands: show ip interface brief | include Loopback0
+      register: loopback_check
+      ignore_errors: yes
+
+    # For R1
+    - name: Check OSPF configuration for R1
+      ios_command:
+        commands: show running-config | include network
+      register: ospf_check_r1
+      when: inventory_hostname == 'R1'
+
+    - name: Ensure OSPF process is configured on R1
+      ios_config:
+        lines:
+          - router ospf 1
+      when: inventory_hostname == 'R1'
+
+    - name: Configure OSPF network for R1
+      ios_config:
+        lines:
+          - network 1.1.1.0 0.0.0.255 area 0
+          - network 8.8.8.0 0.0.0.255 area 0
+        parents: router ospf 1
+      when: 
+        - inventory_hostname == 'R1'
+        - "'network 1.1.1.0 0.0.0.255 area 0' not in ospf_check_r1.stdout[0]"
+
+    # For R2
+    - name: Check OSPF configuration for R2
+      ios_command:
+        commands: show running-config | include network
+      register: ospf_check_r2
+      when: inventory_hostname == 'R2'
+
+    - name: Ensure OSPF process is configured on R2
+      ios_config:
+        lines:
+          - router ospf 1
+      when: inventory_hostname == 'R2'
+
+    - name: Configure OSPF network for R2
+      ios_config:
+        lines:
+          - network 2.2.2.0 0.0.0.255 area 0
+        parents: router ospf 1
+      when: 
+        - inventory_hostname == 'R2'
+        - "'network 2.2.2.0 0.0.0.255 area 0' not in ospf_check_r2.stdout[0]"
+
+    # For R3
+    - name: Check OSPF configuration for R3
+      ios_command:
+        commands: show running-config | include network
+      register: ospf_check_r3
+      when: inventory_hostname == 'R3'
+
+    - name: Ensure OSPF process is configured on R3
+      ios_config:
+        lines:
+          - router ospf 1
+      when: inventory_hostname == 'R3'
+
+    - name: Configure OSPF network for R3
+      ios_config:
+        lines:
+          - network 3.3.3.0 0.0.0.255 area 0
+        parents: router ospf 1
+      when: 
+        - inventory_hostname == 'R3'
+        - "'network 3.3.3.0 0.0.0.255 area 0' not in ospf_check_r3.stdout[0]"
+
+    # For R4
+    - name: Check OSPF configuration for R4
+      ios_command:
+        commands: show running-config | include network
+      register: ospf_check_r4
+      when: inventory_hostname == 'R4'
+
+    - name: Ensure OSPF process is configured on R4
+      ios_config:
+        lines:
+          - router ospf 1
+      when: inventory_hostname == 'R4'
+
+    - name: Configure OSPF network for R4
+      ios_config:
+        lines:
+          - network 4.4.4.0 0.0.0.255 area 0
+        parents: router ospf 1
+      when: 
+        - inventory_hostname == 'R4'
+        - "'network 4.4.4.0 0.0.0.255 area 0' not in ospf_check_r4.stdout[0]"

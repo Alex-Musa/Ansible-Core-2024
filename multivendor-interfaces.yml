@@ -1,0 +1,50 @@
+---
+
+- name: "MultiVendor Gathering Configuration"
+  hosts: all
+  connection: network_cli
+
+  tasks:
+    - name: Merge provided configuration with device configuration
+      cisco.ios.ios_interfaces:
+        config:
+        - name: GigabitEthernet0/0
+          description: Configured and Merged by Ansible Network - AMusa
+          enabled: true
+        - name: GigabitEthernet0/1
+          description: Configured and Merged by Ansible Network - AMusa
+          mtu: 3800
+          enabled: false
+          speed: 100
+          duplex: full
+        state: merged
+      register: ios_facts
+      when: "ansible_network_os == 'cisco.ios.ios'"
+
+    - name: Merge provided configuration with device configuration
+      vyos.vyos.vyos_interfaces:
+        config:
+        - name: eth0
+          description: Configured by Ansible
+          enabled: true
+          vifs:
+          - vlan_id: 200
+            description: VIF 200 - ETH2
+
+        - name: eth1
+          description: Configured by Ansible - AMusa
+          mtu: 1500
+
+        state: merged
+      register: Vyos_facts
+      when: "ansible_network_os == 'vyos.vyos.vyos'"
+
+    - name: "Print Cisco Facts"
+      debug:
+        msg: "{{ ios_facts.commands }}"
+      when: "ansible_network_os == 'cisco.ios.ios'"
+
+    - name: "Print Vyos Facts"
+      debug:
+        msg: "{{ Vyos_facts.commands }}"
+      when: "ansible_network_os == 'vyos.vyos.vyos'"

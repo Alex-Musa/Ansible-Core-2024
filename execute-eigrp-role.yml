@@ -1,0 +1,8 @@
+---
+
+- name: "CONFIG EIGRP"
+  hosts: R1
+  connection: network_cli
+
+  roles:
+    - eigrp_role

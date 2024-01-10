@@ -1,0 +1,15 @@
+---
+
+- name: "Play to some variable substitution"
+  hosts: all
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+    - name: "Apply BGP configuration"
+      cisco.ios.ios_config:
+        src: "./templates/bgp-config/bgp.j2"
+
+    - name: "Apply EIGRP configuration"
+      cisco.ios.ios_config:
+        src: "eigrp/{{ eigrp_style }}.j2"

@@ -1,0 +1,25 @@
+---
+- name: "Config device using RESTCONF"
+  hosts: CSR1
+  connection: local
+  gather_facts: false
+
+  vars:
+    restconf_url: "https://{{ ansible_host }}/restconf/data/native/router"
+    accept_header: "application/yang-data+json, application/yang-data.errors+json"
+    content_type_header: "application/yang-data+json"
+
+  tasks:
+    - name: "Task1 - Config OSPF"
+      uri:
+        url: "{{ restconf_url }}"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        method: PATCH
+        headers:
+          Accept: "{{ accept_header }}"
+          Content-Type: "{{ content_type_header }}"
+        body_format: json
+        body: "{{ ospf_configure }}"
+        validate_certs: false
+        status_code: [200, 204]

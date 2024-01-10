@@ -1,0 +1,35 @@
+---
+- name: "Config device using RESTCONF"
+  hosts: CSR1
+  connection: local
+  gather_facts: false
+
+  vars:
+    restconf_url: "https://{{ ansible_host }}/restconf/data/native/router"
+    accept_header: "application/yang-data+json, application/yang-data.errors+json"
+    content_type_header: "application/yang-data+json"
+    ospf_config_file: "black_IP.txt"
+
+  tasks:
+    - name: "Task1 - Read OSPF config from file"
+      ansible.builtin.slurp:
+        src: "{{ ospf_config_file }}"
+      register: ospf_file_content
+
+    - name: "Task2 - Convert OSPF config to JSON format"
+      set_fact:
+        ospf_configure: "{{ ospf_file_content['content'] | b64decode | from_json }}"
+
+    - name: "Task3 - Config OSPF"
+      uri:
+        url: "{{ restconf_url }}"
+        user: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        method: put
+        headers:
+          Accept: "{{ accept_header }}"
+          Content-Type: "{{ content_type_header }}"
+        body_format: json
+        body: "{{ ospf_configure }}"
+        validate_certs: false
+        status_code: [200, 204]

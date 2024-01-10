@@ -1,0 +1,8 @@
+router ospf 1
+router-id {{ ospf.rid }}
+{% for NTID in ospf.networks %}
+network {{ NTID.network }} {{ NTID.wildcard }} area {{ NTID.area }}
+{% endfor %}
+{% if ospf.default_originate == true %}
+default-information originate
+{% endif %}

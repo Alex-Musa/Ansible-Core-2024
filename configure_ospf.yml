@@ -1,0 +1,16 @@
+---
+
+- name: Configure OSPF on Cisco Router
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Configure OSPF with specified networks and BGP redistribution
+      ios_config:
+        lines:
+          - router ospf 1
+          - no network 192.168.80.0 0.0.0.255 area 0
+          - network 0.0.0.0 0.0.0.0 area 0
+        match: exact
+        save_when: modified

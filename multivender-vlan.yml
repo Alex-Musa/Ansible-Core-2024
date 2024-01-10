@@ -1,0 +1,34 @@
+- name: "VLAN Configuration"
+  hosts: 192.168.251.111
+  connection: network_cli
+
+  tasks:
+    - name: Merge VLAN configuration
+      cisco.ios.ios_vlans:
+        config:
+          - name: FIVE
+            vlan_id: 5
+            state: active
+            shutdown: disabled
+          - name: TEN
+            vlan_id: 10
+            state: active
+            shutdown: disabled
+        state: merged
+      register: cisco_output
+
+    - name: Merge L2 interface configuration
+      cisco.ios.ios_l2_interfaces:
+        config:
+          - name: "{{ item.interface }}"
+            mode: access
+            access:
+              vlan: "{{ item.vlan }}"
+        state: merged
+      register: cisco_output
+      loop: "{{ vlans.interfaces }}"
+      when: item.mode == "access"
+
+    - name: "Print Cisco config"
+      debug:
+        msg: "{{ cisco_output }}"

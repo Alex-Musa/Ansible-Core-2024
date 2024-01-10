@@ -1,0 +1,19 @@
+---
+
+- name: "CONFIG EIGRP"
+  hosts: R1
+  connection: network_cli
+
+  roles:
+    - eigrp_role
+
+  tasks:
+    - name: "FURTHER VERIFY"
+      cisco.ios.ios_command:
+        commands: 
+          - "show ip eigrp inter"
+      register: new_output
+
+    - name: "PRINT VERIFICATION"
+      debug:
+        msg: "{{ new_output }}"

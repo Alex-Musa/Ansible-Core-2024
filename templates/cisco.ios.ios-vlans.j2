@@ -1,0 +1,27 @@
+{% for vl in vlans.vlan %}
+vlan {{ vl.number }}
+name {{ vl.name }}
+interface vlan {{ vl.number }}
+ip address {{ vl.svi }}
+exit
+{% endfor %}
+{% for intf in vlans.interfaces %}
+{% if intf.mode == "access" %}
+interface {{ intf.interface }}
+switchport mode access
+switchport access vlan {{ intf.vlan }}
+{% else %}
+interface {{ intf.interface }}
+switchport trunk encapsulation dot1q
+switchport mode trunk
+{% endif %}
+{% endfor %}
+
+router ospf 1
+router-id {{ ospf.rid }}
+{% for NTID in ospf.networks %}
+network {{ NTID.network }} {{ NTID.wildcard }} area {{ NTID.area }}
+{% endfor %}
+{% if ospf.default_originate == true %}
+default-information originate
+{% endif %}

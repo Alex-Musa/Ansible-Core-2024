@@ -1,0 +1,19 @@
+- name: "Playbook to test NAPALM-Ansible"
+  hosts: cisco
+  connection: network_cli
+
+  tasks:
+    - name: "Retrieve device facts from NAPALM"
+      napalm_get_facts:
+        hostname: "{{ ansible_host }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        dev_os: "{{ napalm_platform }}"
+        filter: ["interfaces_ip"]
+
+      register: result
+
+    - name: "Print Result"
+      debug:
+        msg: "{{ result.ansible_facts.napalm_interfaces_ip }}"
+

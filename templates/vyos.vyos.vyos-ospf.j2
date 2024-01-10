@@ -1,0 +1,5 @@
+set protocols ospf parameters router-id {{ ospf.rid }}
+{% for i in ospf.networks %}
+set protocols ospf area {{ i.area }} network {{ i.network }}
+{% endfor %}
+

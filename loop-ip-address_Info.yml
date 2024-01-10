@@ -1,0 +1,21 @@
+---
+
+- name: "Loop Test"
+  hosts: usa
+  gather_facts: true
+  connection: network_cli
+
+  tasks:
+    - name: Collect Full Set of Facts from IOS Devices
+      ios_facts:
+        gather_subset: all
+      register: ios_facts
+
+    - name: "Print IOS Facts"
+      debug:
+        var: ios_facts.ansible_facts
+
+    - name: "Loop through IP info"
+      debug:
+        msg: "{{ ios_facts.ansible_facts['ansible_net_hostname'] }} has an IP address {{ item }} configured"
+      loop: "{{ ios_facts.ansible_facts['ansible_net_all_ipv4_addresses'] }}"

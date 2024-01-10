@@ -1,0 +1,28 @@
+---
+
+syslog:
+  hosts:
+    - ip: 1.1.1.1
+
+    - ip: 2.2.2.2
+      port: 1234
+
+    - ip: 3.3.3.3
+
+    - ip: 4.4.4.4
+      port: 4567
+
+
+# ospf:
+#   rid: "4.4.4.4"
+#   networks:
+#     - network: 10.24.2.0/24
+#       area: 0
+#     - network: 4.4.4.4/32
+#       area: 44
+
+# bgp:
+#   asn: "4"
+#   rid: "4.4.4.4"
+#   neighbors:
+#     - "10.24.2.2"

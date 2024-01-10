@@ -1,0 +1,53 @@
+---
+
+- name: Configure Loopback Interfaces on Cisco Routers
+  hosts: all
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Check for existing Loopback0 interface
+      ios_command:
+        commands: show ip interface brief | include Loopback0
+      register: loopback_check
+      ignore_errors: yes
+
+    - name: Configure Loopback Interface for R1
+      ios_config:
+        lines:
+          - interface Loopback0
+          - ip address 1.1.1.1 255.255.255.0
+      when: 
+        - inventory_hostname == 'R1'
+        - "'Loopback0' not in loopback_check.stdout[0]"
+
+    - name: Configure Loopback Interface for R2
+      ios_config:
+        lines:
+          - interface Loopback0
+          - ip address 2.2.2.2 255.255.255.0
+      when: 
+        - inventory_hostname == 'R2'
+        - "'Loopback0' not in loopback_check.stdout[0]"
+
+    - name: Configure Loopback Interface for R3
+      ios_config:
+        lines:
+          - interface Loopback0
+          - ip address 3.3.3.3 255.255.255.0
+      when: 
+        - inventory_hostname == 'R3'
+        - "'Loopback0' not in loopback_check.stdout[0]"
+
+    - name: Configure Loopback Interface for R4
+      ios_config:
+        lines:
+          - interface Loopback0
+          - ip address 4.4.4.4 255.255.255.0
+      when: 
+        - inventory_hostname == 'R4'
+        - "'Loopback0' not in loopback_check.stdout[0]"
+
+    - name: Save Configuration
+      ios_config:
+        save_when: modified

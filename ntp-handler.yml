@@ -1,0 +1,19 @@
+---
+
+- name: "REGISTER PLAYBOOK"
+  hosts: R1
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+    - name: "Push config and print the results"
+      cisco.ios.ios_config:
+        src: "./templates/ntp.j2"
+      notify: ntp_handler_example
+      register: ntp_result
+
+  handlers:
+    - name: "HANDLER 1 - This will check for updates"
+      listen: ntp_handler_example
+      debug:
+        msg: "CONFIG CHANGE: {{ ntp_result.commands }}"

@@ -1,0 +1,8 @@
++hostname S2
++ip domain-name ********.com
+-hostname RunningHostname
+-ip domain-name cisco.com
+-archive
+ -path flash:archive
+ -write-memory
+-ip scp server enable

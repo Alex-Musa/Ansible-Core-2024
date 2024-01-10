@@ -1,0 +1,46 @@
+---
+
+- name: "PlayBook 1 - Target Cisco Devices"
+  hosts: all
+  connection: network_cli
+
+  tasks:
+  - name: Apply the provided configuration without port
+    cisco.ios.ios_logging_global:
+      config:
+        hosts:
+          - hostname: "{{ item.ip }}"
+      state: merged
+    loop: "{{ syslog.hosts }}"
+    when: item.port is not defined 
+    register: task1_output
+
+  - name: Apply the provided configuration with port
+    cisco.ios.ios_logging_global:
+      config:
+        hosts:
+          - hostname: "{{ item.ip }}"
+            transport:
+              tcp:
+                port: "{{ item.port }}"
+      state: merged
+    loop: "{{ syslog.hosts }}"
+    when: item.port is defined 
+    register: task2_output
+
+  - name: "Print task 1"
+    debug:
+      msg: "{{ item.commands }}"
+    loop: "{{ task1_output.results }}"
+    loop_control:
+      label: none
+    when: item.commands is defined
+
+  - name: "Print task 2"
+    debug:
+      msg: "{{ item.commands }}"
+    loop: "{{ task2_output.results }}"
+    loop_control:
+      label: none
+    when: item.commands is defined
+

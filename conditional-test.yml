@@ -1,0 +1,17 @@
+---
+
+- name: "Playbook to test conditional logic"
+  hosts: R4
+  gather_facts: true
+  connection: network_cli
+
+  tasks:
+    - name: Task1
+      ios_facts:
+        gather_subset: all
+      register: ios_facts
+
+    - name: "Print Interface Facts"
+      debug:
+        msg: "{{ item }}"
+      loop: "{{ ios_facts.ansible_facts['ansible_net_all_ipv4_addresses'] }}"

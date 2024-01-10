@@ -1,0 +1,25 @@
+---
+
+- name: "Play TO CONFIGURE EIGRP"
+  hosts: R1
+  connection: network_cli
+
+  tasks:
+    - name: "Task 1 - Push EIGRP"
+      cisco.ios.ios_config:
+        src: "eigrp.j2"
+      register: eiger_result
+
+    - name: "Task 2 - Print eigrp Config"
+      debug:
+        msg: "{{ eiger_result.commands }}"
+
+    - name: "Task 3 - Verify eigrp config"
+      cisco.ios.ios_command:
+        commands: "show run | section eigrp"
+      register: eiger_show_output
+
+    - name: "TASK 4 - Print show command"
+      debug:
+        msg: "{{ eiger_show_output.stdout_lines }}"
+

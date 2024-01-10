@@ -1,0 +1,9 @@
+- name: "VLAN Configs via Jinja"
+  hosts: 192.168.251.111
+  connection: network_cli
+
+  tasks:
+    - name: "Configure Cisco VLAN"
+      template: src="cisco.ios.ios-vlans.j2" dest="config-file/s1.text"
+        
+        

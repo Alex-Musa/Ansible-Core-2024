@@ -1,0 +1,12 @@
+---
+
+- name: "Vyos Playbook"
+  hosts: R6_VYOS
+  connection: network_cli
+
+  tasks:
+    - name: "Push some banner configration to R6_Vyos"
+      vyos.vyos.vyos_banner:
+        banner: "pre-login"
+        state: "present"
+        text: "Ansible LAB By AMusa"

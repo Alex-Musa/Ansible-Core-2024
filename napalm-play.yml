@@ -1,0 +1,21 @@
+- name: "Playbook to test NAPALM-Ansible"
+  hosts: all
+  connection: network_cli
+
+  vars:
+    disable_ssl_verification: True  # Only for troubleshooting, not for production use
+
+  tasks:
+    - name: "Retrieve device facts from NAPALM"
+      napalm_get_facts:
+        hostname: "{{ inventory_hostname }}"
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_password }}"
+        dev_os: "{{ napalm_platform }}"
+        optional_args:
+          ssl_verify: "{{ not disable_ssl_verification }}"
+      register: result
+
+    - name: "Print Result"
+      debug:
+        msg: "{{ result }}"

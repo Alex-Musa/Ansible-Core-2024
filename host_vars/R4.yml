@@ -1,0 +1,11 @@
+ospf:
+  rid: "5.5.5.5"
+  networks:
+    - network: 10.25.2.0/24
+      area: 0
+
+bgp:
+  asn: "5"
+  rid: "5.5.5.5"
+  neighbors:
+    - "10.25.2.2"
